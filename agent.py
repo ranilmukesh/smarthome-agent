@@ -151,7 +151,7 @@ def build_agent() -> Agent:
     return Agent(
         name="SmartHomeAgent",
         model=Nvidia(
-            id="minimaxai/minimax-m2.7",
+            id="nvidia/nemotron-3-super-120b-a12b",
             api_key=NVIDIA_API_KEY,
         ),
         tools=[
