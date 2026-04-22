@@ -36,6 +36,22 @@ from agno.knowledge.knowledge import Knowledge
 from agno.vectordb.lancedb import LanceDb, SearchType
 from agno.knowledge.embedder.openai import OpenAIEmbedder
 from agno.db.sqlite import SqliteDb
+from agno.guardrails import PromptInjectionGuardrail, BaseGuardrail
+from agno.exceptions import InputCheckError, CheckTrigger
+import re
+
+class CypherWriteGuardrail(BaseGuardrail):
+    BLOCKED = re.compile(r"\b(CREATE|MERGE|DELETE|DETACH|SET|REMOVE|DROP|LOAD\s+CSV|CALL\s+db\.)\b|;", re.I)
+
+    def check(self, run_input):
+        if isinstance(run_input.input_content, str) and self.BLOCKED.search(run_input.input_content):
+            raise InputCheckError(
+                "Write/DDL Cypher keywords are not allowed.",
+                check_trigger=CheckTrigger.INPUT_NOT_ALLOWED,
+            )
+
+    async def async_check(self, run_input):
+        self.check(run_input)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 NEO4J_URI      = os.getenv("NEO4J_URI",      "bolt://localhost:7687")
@@ -189,6 +205,10 @@ def build_agent() -> Agent:
         add_session_summary_to_context=True,
         markdown=True,
         instructions=INSTRUCTIONS,
+        pre_hooks=[
+            PromptInjectionGuardrail(),
+            CypherWriteGuardrail(),
+        ],
         stream=True,
         debug_mode=True  # uncomment for local debugging
     )
