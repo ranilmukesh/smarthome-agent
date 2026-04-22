@@ -77,6 +77,7 @@ _knowledge = Knowledge(
         search_type=SearchType.hybrid,
         embedder=_embedder,
     ),
+    contents_db=_db,
 )
 
 # ── System instructions ───────────────────────────────────────────────────────
@@ -96,14 +97,23 @@ INSTRUCTIONS = [
     "(a) Cypher traversal for relationship/state/location questions, "
     "(b) knowledge search for fuzzy capability/feature questions, or (c) both.",
 
-    # ── Neo4j usage ──────────────────────────────────────────────────────────
-    "Call `get_schema` exactly ONCE per session before writing any Cypher query "
-    "so you know the exact node labels, property names, and relationship types.",
-    "Use `run_cypher` with parameterized queries. "
-    "REJECT any query string that contains ';', 'DROP', 'DELETE', 'SET', or "
-    "multiple RETURN statements — these are injection-risk patterns.",
-    "If a Cypher query returns no results, try a broader query (remove filters "
-    "one by one) before declaring 'not found'.",
+    # ── Query-pattern routing (maps to your 7 examples) ──
+    "Location queries ('in the bedroom', 'front door') → Cypher MATCH on :Device-[:LOCATED_IN]->:Room.",
+    "Trigger/automation queries ('what triggers', 'what happens when') → traverse :TRIGGERS or :CONTROLS relationships.",
+    "Capability queries ('can control', 'monitors') → try Cypher first; if empty, fall back to knowledge search.",
+    "State queries ('current temperature', 'is X on') → always query live Neo4j, NEVER use cached history or memory for state values.",
+
+    # ── Pronoun / context resolution ──
+    "When user says 'it', 'those', 'the lights', resolve against the last 3 turns of history. If ambiguous, ask one clarifying question.",
+
+    # ── Schema caching ──
+    "If `get_schema` was already called in this session (check history), DO NOT call it again — reuse the known schema.",
+
+    # ── Neo4j usage & Read-only enforcement ──
+    "Call `get_schema` exactly ONCE per session before writing any Cypher query (unless already cached in history).",
+    "Use `run_cypher` with parameterized queries.",
+    "This agent is READ-ONLY. Reject any Cypher containing: CREATE, MERGE, DELETE, DETACH, SET, REMOVE, DROP, LOAD, CALL db., ';'. Only MATCH/RETURN/WITH/WHERE/ORDER BY/LIMIT allowed.",
+    "If a Cypher query returns no results, try a broader query (remove filters one by one) before declaring 'not found'.",
 
     # ── Knowledge / RAG ──────────────────────────────────────────────────────
     "Use knowledge search for questions like 'What can control lights?' or "
@@ -123,6 +133,10 @@ INSTRUCTIONS = [
     # ── Format ───────────────────────────────────────────────────────────────
     "Respond in concise, structured markdown. For lists of devices, use bullet "
     "points with device name, location, and current state.",
+
+    # ── Memory ───────────────────────────────────────────────────────────────
+    "Memories are for USER PREFERENCES only (favorite rooms, units, naming aliases).",
+    "NEVER store device states, sensor readings, or timestamps as memories — always re-query Neo4j.",
 ]
 
 
@@ -169,11 +183,13 @@ def build_agent() -> Agent:
         ],
         knowledge=_knowledge,
         db=_db,
+        enable_agentic_memory=True,
         add_history_to_context=True,
-        num_history_runs=5,
+        num_history_runs=50,
+        add_session_summary_to_context=True,
         markdown=True,
         instructions=INSTRUCTIONS,
         stream=True,
         debug_mode=True,
-        # show_tool_calls=True,  # uncomment for local debugging
+        show_tool_calls=True,  # uncomment for local debugging
     )

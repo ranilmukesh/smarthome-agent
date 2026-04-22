@@ -38,7 +38,7 @@ log = logging.getLogger("smarthome_api")
 
 # ── Import agent (lazy — catches misconfiguration at startup, not per-request)
 try:
-    from agent import build_agent
+    from agent import build_agent, _db
     _agent = build_agent()
     log.info("SmartHomeAgent initialised successfully.")
 except Exception as exc:
@@ -238,9 +238,22 @@ async def query(body: QueryRequest, request: Request):
 # ── AgentOS wrapper (adds /sessions, /runs, tracing UI) ──────────────────────
 try:
     from agno.os import AgentOS  # type: ignore
+    from agno.os.config import AgentOSConfig, EvalsConfig
 
     if _agent:
-        _agent_os = AgentOS(agents=[_agent], base_app=app)
+        os_config = AgentOSConfig(
+            available_models=["nvidia:nvidia/nemotron-3-super-120b-a12b", "nvidia:meta/llama-3.3-70b-instruct"],
+            evals=EvalsConfig(
+                available_models=["nvidia:nvidia/nemotron-3-super-120b-a12b", "nvidia:meta/llama-3.3-70b-instruct"]
+            )
+        )
+        _agent_os = AgentOS(
+            agents=[_agent], 
+            base_app=app, 
+            db=_db, 
+            tracing=True,
+            config=os_config
+        )
         app = _agent_os.get_app()
         log.info("AgentOS overlay applied — /sessions and tracing available.")
 except ImportError:

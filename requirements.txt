@@ -25,3 +25,8 @@ python-dotenv
 
 # Utilities
 httpx
+
+# Telemetry / AgentOS Tracing
+opentelemetry-api
+opentelemetry-sdk
+openinference-instrumentation-agno

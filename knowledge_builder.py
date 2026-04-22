@@ -69,6 +69,7 @@ def build_knowledge(records: list[dict]) -> None:
         from agno.knowledge.knowledge import Knowledge
         from agno.vectordb.lancedb import LanceDb, SearchType
         from agno.knowledge.embedder.openai import OpenAIEmbedder
+        from agent import _db
     except ImportError as e:
         print(f"❌  Import error: {e}\n   Run: pip install agno lancedb openai")
         sys.exit(1)
@@ -94,6 +95,7 @@ def build_knowledge(records: list[dict]) -> None:
             search_type=SearchType.hybrid,
             embedder=embedder,
         ),
+        contents_db=_db,
     )
 
     print(f"Loading {len(records)} device descriptions into LanceDB …")
