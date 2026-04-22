@@ -11,7 +11,7 @@ The system implements a **ReAct-style agentic workflow** that combines:
 
 ### Tech Stack
 - **Agent Framework**: Agno (with ReasoningTools)
-- **LLM**: NVIDIA NIM (`meta/llama-3.3-70b-instruct`)
+- **LLM**: NVIDIA NIM (`nvidia/nemotron-3-super-120b-a12b`)
 - **Embeddings**: NVIDIA NIM (`nvidia/llama-nemotron-embed-1b-v2`)
 - **Graph Database**: Neo4j (Relationships & State)
 - **Vector Database**: LanceDB (Hybrid search over device descriptions)
