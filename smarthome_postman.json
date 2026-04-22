@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "Smart Home Query API",
+    "description": "Agno + NVIDIA NIM + Neo4j smart home query system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:7777/health" },
+        "description": "Liveness + Neo4j connectivity check"
+      }
+    },
+    {
+      "name": "List All Devices",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:7777/devices" },
+        "description": "Returns all seeded device nodes"
+      }
+    },
+    {
+      "name": "Query: Bedroom devices",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What devices are in the bedroom?\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: Hallway light triggers",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Which sensors trigger the hallway lights?\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: Smart speaker controls",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Show me all devices that the smart speaker can control\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: Living room temperature",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What is the current temperature in the living room?\",\n  \"include_reasoning\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: Front door monitors",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Which devices monitor the front door?\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: All motion sensors",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Find all motion sensors and their locations\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Query: Garage motion detected",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What happens when motion is detected in the garage?\",\n  \"include_reasoning\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Multi-turn: Session turn 1",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What devices are in the kitchen?\",\n  \"include_reasoning\": true,\n  \"session_id\": \"demo-session-001\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Multi-turn: Session turn 2",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:7777/query" },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Which of those are sensors?\",\n  \"include_reasoning\": true,\n  \"session_id\": \"demo-session-001\"\n}"
+        }
+      }
+    }
+  ]
+}

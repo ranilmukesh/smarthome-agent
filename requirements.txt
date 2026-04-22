@@ -1,0 +1,27 @@
+# Core agentic framework
+agno
+sqlalchemy
+databases[sqlite]
+
+# NVIDIA NIM / OpenAI-compatible client
+# Used for: LLM inference AND embedding (OpenAIEmbedder → NVIDIA NIM endpoint)
+openai
+
+# Neo4j graph driver
+neo4j
+
+# Vector store + hybrid search
+lancedb
+tantivy          # BM25 full-text index for LanceDB hybrid mode
+pyarrow          # Required by lancedb for columnar storage
+
+# FastAPI stack
+fastapi
+uvicorn[standard]
+pydantic
+
+# Config
+python-dotenv
+
+# Utilities
+httpx
