@@ -9,7 +9,7 @@ While LangGraph offers exceptional fine-grained control over cyclical agent stat
 * **Why Agno?** Agno provides native `ReasoningTools` (`think` and `analyze`) which abstract the multi-turn self-verification loop seamlessly. For a localized smart home domain, this avoids the boilerplate of manually managing LangGraph checkpoint states and cyclical graph routing. It achieves the exact same ReAct outcome—planning, acting, and verifying—with higher velocity and a cleaner, highly explainable reasoning trace.
 
 ### 2. LLM & Embeddings: NVIDIA NIM (Alternative to Gemini)
-The system leverages `meta/llama-3.3-70b-instruct` (or `minimax`) via NVIDIA NIM alongside the `llama-nemotron-embed-1b-v2` embedding model. 
+The system leverages `nvidia/nemotron-3-super-120b-a12b` (or `minimax`) via NVIDIA NIM alongside the `llama-nemotron-embed-1b-v2` embedding model. 
 * **Why NVIDIA NIM?** This stack was chosen for its strict adherence to OpenAI-compatible tool-calling schemas and exceptionally low-latency inference. While Gemini 1.5 offers massive context windows, traversing a smart home graph relies on high-frequency, low-token tool calls (e.g., pulling schema, generating Cypher, verifying results). The NIM endpoint is highly optimized for this rapid, iterative function-calling cadence, preventing the agent from stalling during multi-step reasoning.
 
 ### 3. Vector Storage: LanceDB
