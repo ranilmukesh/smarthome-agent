@@ -190,6 +190,5 @@ def build_agent() -> Agent:
         markdown=True,
         instructions=INSTRUCTIONS,
         stream=True,
-        debug_mode=True,
-        show_tool_calls=True,  # uncomment for local debugging
+        debug_mode=True  # uncomment for local debugging
     )
